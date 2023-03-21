@@ -6,11 +6,6 @@ module.exports = {
       script: './dist/index.js',
       exec_mode: 'fork',
       instances: 1,
-      // cron_restart: '0 * * * *',
-      env: {
-        OAUTH_CALLBACK: 'https://gbs-open.eriri.net/auth/callback',
-        PORT: 10500,
-      },
     },
   ],
 };
