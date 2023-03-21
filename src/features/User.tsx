@@ -1,7 +1,11 @@
-import { currentUser as user } from '$';
 import clsx from 'clsx';
+import { HonoContext } from '..';
 
-export function User() {
+type Props = {
+  c: HonoContext;
+};
+export function User({ c }: Props) {
+  const user = c.get('user');
   if (!user) return <></>;
   return (
     <div>

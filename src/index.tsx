@@ -20,20 +20,17 @@ type Variables = {
 export type HonoContext = Context<{ Variables: Variables }>;
 const app = new Hono<{ Variables: Variables }>();
 
-export let currentUser: User | null = null;
-
 app.use('/static/*', serveStatic({ root: './' }));
 app.use('*', async (c, next) => {
   const session = c.req.cookie()?.session;
   if (!session) return await next();
   const user = await getUsersFromSession(session);
   c.set('user', user);
-  currentUser = user ?? null;
   await next();
 });
 
 app.get('/', async (c) => {
-  return c.html(<IndexPage count={await getActiveUserCount()} />);
+  return c.html(<IndexPage c={c} count={await getActiveUserCount()} />);
 });
 
 app.get('/auth/login', async (c) => {

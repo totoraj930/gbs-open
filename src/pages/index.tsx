@@ -6,14 +6,15 @@ import { QA } from '$/features/QA';
 
 type Props = {
   count: number;
+  c: HonoContext;
 };
-export function IndexPage({ count }: Props) {
+export function IndexPage({ count, c }: Props) {
   return (
     <Layout title="ツイ救援プロジェクト">
-      <Header />
+      <Header c={c} />
       <main>
         <h2 class="count">現在 {count}人が参加中です。</h2>
-        <User />
+        <User c={c} />
         <QA />
       </main>
     </Layout>

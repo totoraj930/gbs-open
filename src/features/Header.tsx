@@ -1,5 +1,10 @@
-import { currentUser as user } from '$';
-export function Header() {
+import { HonoContext } from '..';
+
+type Props = {
+  c: HonoContext;
+};
+export function Header({ c }: Props) {
+  const user = c.get('user');
   return (
     <header>
       <h1>ツイ救援プロジェクト</h1>
