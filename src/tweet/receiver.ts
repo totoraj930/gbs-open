@@ -137,6 +137,8 @@ export async function getTweet(): Promise<RaidTweet[] | null> {
   try {
     const twitRes = await v1SearchTweets(client.twit, getSearchParam(since_id));
 
+    since_id = twitRes.data.search_metadata.max_id;
+
     // クライアントの情報更新
     clientList[cIndex].limit = twitRes.rateLimit?.remaining ?? 0;
     clientList[cIndex].resetTime =
