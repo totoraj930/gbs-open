@@ -1,0 +1,81 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font-size: 16px;
+  line-height: 1;
+}
+
+header,
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+header {
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #313030;
+  color: #fff;
+}
+main {
+  padding: 10px;
+}
+
+a {
+  color: #00c5df;
+}
+
+main p {
+  margin: 1em 0;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+.on {
+  color: #00c431;
+  font-weight: bold;
+}
+.off {
+  color: #ff0037;
+  font-weight: bold;
+}
+
+.btn {
+  padding: 10px 20px;
+  background: #00a2ff;
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+}
+.btn:hover {
+  opacity: 0.8;
+}
+.btn.cancel {
+  background: #ff0015;
+  color: #fff;
+}
+
+.qa h2 {
+  margin-top: 2em;
+}
+.qa p {
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.count {
+  font-size: 20px;
+  color: #00bd3f;
+}
