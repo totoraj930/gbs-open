@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsx watch src/index.tsx",
+    "dev": "tsx watch src/index.tsx",
     "dev:tweet": "tsx src/tweet/index.ts",
     "build": "esbuild --bundle --platform=node --outdir=dist ./src/index.tsx",
-    "build2": "esbuild --bundle --platform=node --outdir=dist ./src/tweet/index.ts"
+    "build:tweet": "esbuild --bundle --platform=node --outdir=dist/tweet/ ./src/tweet/index.ts"
   },
   "lisense": "MIT",
   "dependencies": {
