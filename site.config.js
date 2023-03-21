@@ -9,6 +9,7 @@ module.exports = {
       // cron_restart: '0 * * * *',
       env: {
         OAUTH_CALLBACK: 'https://gbs-open.eriri.net/auth/callback',
+        PORT: 10500,
       },
     },
   ],
