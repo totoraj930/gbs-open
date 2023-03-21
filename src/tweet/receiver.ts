@@ -14,7 +14,7 @@ type ReceiverEvents = {
   tweet: RaidTweet;
 };
 
-export const tweetReciver = mitt<ReceiverEvents>();
+export const tweetReceiver = mitt<ReceiverEvents>();
 
 export type RaidTweet = {
   name: string;
@@ -85,7 +85,7 @@ export async function task() {
     return;
   }
   for (let i = res.length - 1; i >= 0; i--) {
-    tweetReciver.emit('tweet', res[i]);
+    tweetReceiver.emit('tweet', res[i]);
   }
   if (startFlag) {
     const intervalTime = getIntervalTime();

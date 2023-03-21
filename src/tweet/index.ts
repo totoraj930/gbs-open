@@ -5,12 +5,12 @@ import {
   getTweet,
   initClientList,
   start,
-  tweetReciver,
-} from './reciver';
+  tweetReceiver,
+} from './receiver';
 
 async function main() {
   await initClientList();
-  tweetReciver.on('tweet', (raidTweet) => {
+  tweetReceiver.on('tweet', (raidTweet) => {
     // console.log(
     //   Date.now() - raidTweet.time,
     //   raidTweet.battle_id,
