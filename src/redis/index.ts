@@ -27,7 +27,7 @@ export function getRawChClient() {
   subRedis.on('message', (ch, json) => {
     try {
       const mini = zRawRaidTweetMini.parse(JSON.parse(json));
-      console.log(Date.now() - mini.t, mini.bi, `Lv.${mini.lv}`, mini.en);
+      // console.log(Date.now() - mini.t, mini.bi, `Lv.${mini.lv}`, mini.en);
       receiver.emit('tweet', mini);
     } catch {}
   });
