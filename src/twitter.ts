@@ -1,5 +1,5 @@
 import { env } from './config';
-import Twitter, { AccessTokenOptions } from 'twitter-lite';
+import Twitter, { AccessTokenOptions, TokenResponse } from 'twitter-lite';
 
 const client = new Twitter({
   consumer_key: env.CONSUMER_KEY,

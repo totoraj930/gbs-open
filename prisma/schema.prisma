@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id               String    @id @default(uuid())
-  twitterId        String    @unique
+  id               String     @id @default(uuid())
+  twitterId        String     @unique
   screenName       String
   oauthToken       String?
   oauthTokenSecret String?
-  isActive         Boolean   @default(false)
+  isActive         Boolean    @default(false)
   sessions         Session[]
+  apiTokens        ApiToken[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -29,4 +30,13 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ApiToken {
+  id      String   @id @default(uuid())
+  token   String   @unique
+  expires DateTime
+  userId  String
+  level   Int
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
