@@ -52,7 +52,7 @@ export function getSearchParam(since_id?: number): SearchV1Param {
   return {
     q: currentQuery(),
     result_type: 'recent',
-    count: 3,
+    count: 20,
     since_id,
     include_entities: false,
   };
