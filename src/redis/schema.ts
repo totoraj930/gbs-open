@@ -1,10 +1,10 @@
-import { RaidTweet } from '$/tweet/receiver';
+import { RaidTweet as RawRaidTweet } from '$/tweet/receiver';
 import { z } from 'zod';
 
 /**
  * Redis送信用の文字数を抑えたRaidTweet
  */
-export const zRaidTweetMini = z.object({
+export const zRawRaidTweetMini = z.object({
   n: z.string(), // name
   sn: z.string(), // screen_name
   en: z.string(), // enemy_name
@@ -16,9 +16,9 @@ export const zRaidTweetMini = z.object({
   t: z.number(), // time
   c: z.string().optional(), // comment
 });
-export type RaidTweetMini = z.infer<typeof zRaidTweetMini>;
+export type RawRaidTweetMini = z.infer<typeof zRawRaidTweetMini>;
 
-export function minifyRaidTweet(tweet: RaidTweet): RaidTweetMini {
+export function minifyRawRaidTweet(tweet: RawRaidTweet): RawRaidTweetMini {
   return {
     n: tweet.name,
     sn: tweet.screen_name,
@@ -33,7 +33,7 @@ export function minifyRaidTweet(tweet: RaidTweet): RaidTweetMini {
   };
 }
 
-export function unpackRaidTweetMini(mini: RaidTweetMini): RaidTweet {
+export function unpackRawRaidTweetMini(mini: RawRaidTweetMini): RawRaidTweet {
   return {
     name: mini.n,
     screen_name: mini.sn,
@@ -47,3 +47,22 @@ export function unpackRaidTweetMini(mini: RaidTweetMini): RaidTweet {
     comment: mini.c,
   };
 }
+
+/**
+ * 実際に配信されるツイートデータ
+ */
+export const zRaidTweetMini = z.object({
+  n: z.string(), // name
+  sn: z.string(), // screen_name
+  ui: z.number(), // user_id
+  ti: z.number(), // tweet_id
+  bi: z.string(), // battle_id
+  ei: z.number(), // enemy_id(-1はリスト外)
+  lv: z.string().optional(), // level
+  en: z.string().optional(), // enemy_name
+  l: z.enum(['en', 'ja']), // language
+  t: z.number(), // time
+  ft: z.number(), // first time(初回投稿時間)
+  c: z.string().optional(), // comment
+});
+export type RaidTweetMini = z.infer<typeof zRaidTweetMini>;

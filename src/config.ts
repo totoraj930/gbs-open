@@ -10,6 +10,8 @@ const schema = z.object({
   CONSUMER_SECRET: z.string(),
   PORT: z.string(),
 
+  GBS_LIST: z.string().url(),
+
   REDIS_HOST: z.string(),
   REDIS_PORT: z.string(),
   REDIS_PASS: z.string(),
