@@ -14,6 +14,9 @@ export async function getUsersFromSession(sessionToken: string) {
     });
     return null;
   }
+  if (!session.user.oauthToken || !session.user.oauthTokenSecret) {
+    return null;
+  }
   return session.user;
 }
 
@@ -42,13 +45,15 @@ export async function toggleActive(userId: string, isActive: boolean) {
     data: { isActive },
   });
 }
-export async function toggleActiveFromTwitterId(
-  twitterId: string,
-  isActive: boolean
-) {
+
+export async function deleteOAuthField(twitterId: string) {
   await prisma.user.updateMany({
     where: { twitterId },
-    data: { isActive },
+    data: {
+      oauthToken: null,
+      oauthTokenSecret: null,
+      isActive: false,
+    },
   });
 }
 

@@ -2,7 +2,7 @@ import { env } from '$/config';
 import mitt from 'mitt';
 import { parse } from '@totoraj930/gbf-tweet-parser';
 import { TwitterApi } from 'twitter-api-v2';
-import { getActiveTokenMany, toggleActiveFromTwitterId } from '$/db';
+import { getActiveTokenMany, deleteOAuthField } from '$/db';
 import {
   getSearchParam,
   getTimestamp,
@@ -186,7 +186,7 @@ export async function disableClient(index: number) {
   // clientListから削除
   clientList.splice(index, 1);
   // DBを更新
-  await toggleActiveFromTwitterId(client.twitterId, false);
+  await deleteOAuthField(client.twitterId);
   return true;
 }
 

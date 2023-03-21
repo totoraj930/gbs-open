@@ -1,32 +1,62 @@
 import { env } from './config';
-import Twitter, { AccessTokenOptions, TokenResponse } from 'twitter-lite';
+import TWitterApi, { TwitterApi } from 'twitter-api-v2';
+import { AccessTokenOptions } from 'twitter-lite';
+import { HonoContext } from '.';
 
-const client = new Twitter({
-  consumer_key: env.CONSUMER_KEY,
-  consumer_secret: env.CONSUMER_SECRET,
+const client = new TWitterApi({
+  appKey: env.CONSUMER_KEY,
+  appSecret: env.CONSUMER_SECRET,
 });
-
-const URL = {
-  requestToken: 'https://api.twitter.com/oauth/request_token',
-  accessToken: 'https://api.twitter.com/oauth/access_token',
-  authorize: 'https://api.twitter.com/oauth/authorize',
-};
 
 const tokenCache = new Map<string, string>();
 
-export async function authUrl() {
-  const res = await client.getRequestToken(env.OAUTH_CALLBACK);
-  if ('oauth_token' in res) {
-    tokenCache.set(res.oauth_token, res.oauth_token_secret);
-    setTimeout(() => {
-      tokenCache.delete(res.oauth_token);
-    }, 1000 * 60 * 5);
-    return `${URL.authorize}?oauth_token=${res.oauth_token}`;
-  } else {
-    throw new Error();
-  }
+export function isValidToken(token: string, secret: string) {
+  const item = tokenCache.get(token);
+  if (!item) return false;
+  return item === secret;
 }
 
-export async function getAccessToken(ops: AccessTokenOptions) {
-  return client.getAccessToken(ops);
+export async function authUrl(c: HonoContext) {
+  const res = await client.generateAuthLink(env.OAUTH_CALLBACK, {
+    authAccessType: 'read',
+    linkMode: 'authorize',
+  });
+  tokenCache.set(res.oauth_token, res.oauth_token_secret);
+  const m5 = 1000 * 60 * 5;
+  // 5分でトークン削除
+  setTimeout(() => {
+    tokenCache.delete(res.oauth_token);
+  }, m5);
+
+  c.cookie('ots', res.oauth_token_secret, {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'Lax',
+    secure: true,
+    expires: new Date(Date.now() + m5),
+  });
+
+  return res.url;
+}
+
+export async function getAccessToken(
+  token: string,
+  secret: string,
+  verifier: string
+) {
+  if (!isValidToken(token, secret)) return null;
+  try {
+    const loginClient = new TwitterApi({
+      appKey: env.CONSUMER_KEY,
+      appSecret: env.CONSUMER_SECRET,
+      accessToken: token,
+      accessSecret: secret,
+    });
+    const res = await loginClient.login(verifier);
+    tokenCache.delete(token);
+    return res;
+  } catch {
+    tokenCache.delete(token);
+    return null;
+  }
 }

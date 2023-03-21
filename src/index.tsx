@@ -13,6 +13,7 @@ import {
   upsertUser,
 } from './db';
 import { IndexPage } from './pages';
+import { html } from 'hono/html';
 
 type Variables = {
   user?: User | null;
@@ -34,7 +35,7 @@ app.get('/', async (c) => {
 });
 
 app.get('/auth/login', async (c) => {
-  return c.redirect(await authUrl(), 302);
+  return c.redirect(await authUrl(c), 302);
 });
 
 app.get('/auth/logout', async (c) => {
@@ -57,15 +58,29 @@ app.get('/auth/toggle/:flag', async (c) => {
 
 app.get('/auth/callback', async (c) => {
   const { oauth_token, oauth_verifier } = c.req.query();
-  if (!oauth_token || !oauth_verifier) {
-    return c.text('認証エラー', 500);
+  const { ots } = c.req.cookie();
+  if (!oauth_token || !oauth_verifier || !ots) {
+    return c.html(
+      html`<h1>認証エラー</h1>
+        <a href="/">トップへ戻る</a>`,
+      500
+    );
   }
-  const res = await getAccessToken({ oauth_token, oauth_verifier });
+
+  const res = await getAccessToken(oauth_token, ots, oauth_verifier);
+  if (!res) {
+    return c.html(
+      html`<h1>認証エラー</h1>
+        <a href="/">トップへ戻る</a>`,
+      403
+    );
+  }
+
   const user = await upsertUser({
-    twitterId: res.user_id,
-    screenName: res.screen_name,
-    oauthToken: res.oauth_token,
-    oauthTokenSecret: res.oauth_token_secret,
+    twitterId: res.userId,
+    screenName: res.screenName,
+    oauthToken: res.accessToken,
+    oauthTokenSecret: res.accessSecret,
   });
   const session = await generateSessionToken(user.id);
 
