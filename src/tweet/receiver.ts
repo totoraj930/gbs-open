@@ -157,7 +157,7 @@ export async function getTweet(): Promise<RaidTweet[] | null> {
           screen_name: tweet.user.screen_name,
           user_id: tweet.user.id,
           tweet_id: tweet.id,
-          time: new Date(tweet.user.created_at).getTime(),
+          time: new Date(tweet.created_at).getTime(),
           comment: gbsTweet.comment,
         },
       ];

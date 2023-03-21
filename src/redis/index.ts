@@ -24,9 +24,10 @@ export function getRawChClient() {
   const receiver = mitt<RawChEvents>();
   const subRedis = new Redis(redisOps);
   subRedis.subscribe('gbs-open-raw');
-  subRedis.on('message', (json) => {
+  subRedis.on('message', (ch, json) => {
     try {
-      const mini = zRawRaidTweetMini.parse(json);
+      const mini = zRawRaidTweetMini.parse(JSON.parse(json));
+      console.log(Date.now() - mini.t, mini.bi, `Lv.${mini.lv}`, mini.en);
       receiver.emit('tweet', mini);
     } catch {}
   });
