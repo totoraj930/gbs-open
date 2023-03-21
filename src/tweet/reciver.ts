@@ -1,19 +1,14 @@
 import { env } from '$/config';
 import mitt from 'mitt';
-import { parse, GbfTweet } from '@totoraj930/gbf-tweet-parser';
-import Twitter from 'twitter-lite';
+import { parse } from '@totoraj930/gbf-tweet-parser';
+import { TwitterApi } from 'twitter-api-v2';
 import { getActiveTokenMany, toggleActiveFromTwitterId } from '$/db';
 import {
-  currentQuery,
-  parseRateLimitHeaders,
-  zRateLimitStatusRes,
-  zSearchTweetsRes,
+  getSearchParam,
+  getTimestamp,
+  isErrorV1,
+  v1SearchTweets,
 } from './schema';
-
-const twitOps = {
-  consumer_key: env.CONSUMER_KEY,
-  consumer_secret: env.CONSUMER_SECRET,
-};
 
 type ReceiverEvents = {
   tweet: RaidTweet;
@@ -21,22 +16,25 @@ type ReceiverEvents = {
 
 export const tweetReciver = mitt<ReceiverEvents>();
 
-type Client = {
-  twitterId: string;
-  twit: Twitter;
-  limit: number; // 多いほど優先
-  resetTime: number;
-};
 export type RaidTweet = {
   name: string;
   screen_name: string;
   user_id: number;
+  tweet_id: number;
   battle_id: string;
   comment?: string;
   enemy_name: string;
   level: string;
   language: 'ja' | 'en';
   time: number;
+};
+
+type Client = {
+  twitterId: string;
+  twit: TwitterApi;
+  limit: number; // 多いほど優先
+  resetTime: number;
+  count: number; // 現在までの使用回数
 };
 
 let clientList: Client[] = [];
@@ -55,25 +53,10 @@ export function getIntervalTime() {
     sumLimit += c.limit;
     sumTime += c.resetTime - now;
   }
-  return Math.max(sumTime / sumLimit / clientList.length, 500);
-}
-
-/**
- * 低いほど優先
- */
-function getScore(client: Client) {
-  return (client.resetTime - Date.now()) / client.limit;
-}
-
-/**
- * 使用するクライアントを取得する
- */
-export function getCurrentClient() {
-  clientList
-    .sort((a, b) => getScore(a) - getScore(b))
-    .sort((a, b) => b.limit - a.limit);
-
-  return clientList[0];
+  const userNum = clientList.length;
+  // 各ユーザーの最大使用回数を50回としたときの最小ms
+  const limit50 = (1000 * 60 * 15) / (50 * userNum);
+  return Math.max(500, Math.max(limit50, sumTime / sumLimit / userNum));
 }
 
 export function start() {
@@ -87,63 +70,124 @@ export function stop() {
   startFlag = false;
 }
 
+/**
+ * インターバルごとに実行される
+ */
 export async function task() {
+  let res = null;
   try {
-    const res = await getTweet();
-    for (let i = res.length - 1; i >= 0; i--) {
-      tweetReciver.emit('tweet', res[i]);
+    res = await getTweet();
+  } catch {}
+  if (res === null) {
+    if (startFlag) {
+      timer = setTimeout(task, 1);
     }
-  } catch {
-    /* */
+    return;
+  }
+  for (let i = res.length - 1; i >= 0; i--) {
+    tweetReciver.emit('tweet', res[i]);
   }
   if (startFlag) {
     const intervalTime = getIntervalTime();
-    console.log(new Date().toLocaleString(), intervalTime);
+    console.log(getTimestamp(), intervalTime);
     timer = setTimeout(task, intervalTime);
   }
 }
 
 /**
+ * 低いほど優先
+ */
+function getScore(client: Client) {
+  return (client.resetTime - Date.now()) / client.limit;
+}
+
+/**
+ * 使用するクライアントを決める
+ */
+export function getCurrentClient() {
+  const nowTime = Date.now();
+  for (const c of clientList) {
+    // 使用回数が0回なら最優先
+    if (c.count === 0) return c;
+    // レート制限更新時間を過ぎているなら優先
+    if (c.resetTime < nowTime) return c;
+  }
+  // 1. レート制限までの回数に余裕がある
+  // 2. 使用できる間隔がより短い
+  clientList
+    .sort((a, b) => getScore(a) - getScore(b))
+    .sort((a, b) => b.limit - a.limit);
+
+  return clientList[0];
+}
+
+/**
  * ツイ救援ツイートを検索する
  */
-export async function getTweet() {
+export async function getTweet(): Promise<RaidTweet[] | null> {
   const client = getCurrentClient();
-  const q = currentQuery();
-  console.log(client.twitterId);
-  const twitRes = await client.twit.get('search/tweets', {
-    q,
-    since_id,
-    count: 30,
-    result_type: 'recent',
-    include_entities: false,
-  });
-  const i = clientList.findIndex((v) => v.twitterId === client.twitterId);
-  clientList[i] = {
-    ...client,
-    ...parseRateLimitHeaders(twitRes),
-  };
+  const cIndex = clientList.indexOf(client);
+  console.log(
+    getTimestamp(),
+    client.twitterId,
+    'count:' + client.count,
+    'limit:' + client.limit
+  );
 
-  const res = zSearchTweetsRes.parse(twitRes);
+  try {
+    const twitRes = await v1SearchTweets(client.twit, getSearchParam(since_id));
 
-  since_id = res.statuses[0]?.id ?? since_id;
-  return res.statuses
-    .map((tweet): RaidTweet | null => {
+    // クライアントの情報更新
+    clientList[cIndex].limit = twitRes.rateLimit?.remaining ?? 0;
+    clientList[cIndex].resetTime =
+      (twitRes.rateLimit?.reset ?? Date.now() / 1000) * 1000;
+    clientList[cIndex].count++;
+
+    return twitRes.data.statuses.flatMap((tweet): RaidTweet[] => {
       const gbsTweet = parse(tweet.text);
-      if (gbsTweet) {
-        return {
+      if (!gbsTweet) return [];
+
+      return [
+        {
+          battle_id: gbsTweet.battleId,
+          enemy_name: gbsTweet.enemyName,
+          language: gbsTweet.language,
+          level: gbsTweet.level,
           name: tweet.user.name,
           screen_name: tweet.user.screen_name,
           user_id: tweet.user.id,
-          battle_id: gbsTweet.battleId,
-          enemy_name: gbsTweet.enemyName,
-          level: gbsTweet.level,
-          language: gbsTweet.language,
-          time: new Date(tweet.created_at).getTime(),
-        };
+          tweet_id: tweet.id,
+          time: new Date(tweet.user.created_at).getTime(),
+          comment: gbsTweet.comment,
+        },
+      ];
+    });
+  } catch (err) {
+    const errors = TwitterApi.getErrors(err);
+    for (const e of errors) {
+      if (isErrorV1(e)) {
+        if (e.code === 89) {
+          // 'Invalid or expired token.'
+          await disableClient(cIndex);
+        }
+        console.error(getTimestamp(), e);
       }
-      return null;
-    })
-    .flatMap((v) => (v === null ? [] : [v]));
+    }
+    return null;
+  }
+}
+
+/**
+ * クライアントを無効にする
+ */
+export async function disableClient(index: number) {
+  const client = clientList[index];
+  if (!client) return false;
+  // clientListから削除
+  clientList.splice(index, 1);
+  // DBを更新
+  await toggleActiveFromTwitterId(client.twitterId, false);
+  return true;
 }
 
 /**
@@ -153,39 +197,17 @@ export async function initClientList() {
   const users = await getActiveTokenMany();
   clientList = users.map((user) => {
     return {
-      twit: new Twitter({
-        ...twitOps,
-        access_token_key: user.oauthToken!,
-        access_token_secret: user.oauthTokenSecret!,
+      twit: new TwitterApi({
+        appKey: env.CONSUMER_KEY,
+        appSecret: env.CONSUMER_SECRET,
+        accessToken: user.oauthToken!,
+        accessSecret: user.oauthTokenSecret!,
       }),
       twitterId: user.twitterId,
-      limit: 0,
-      resetTime: Date.now() + 1000 * 60 * 60,
-      score: 0,
+      // 最大値を初期値にする
+      limit: 180,
+      resetTime: Date.now() + 1000 * 60 * 15,
+      count: 0,
     };
   });
-  const promises = await Promise.all(
-    clientList.map(async (item) => {
-      try {
-        const twitRes = await item.twit.get('application/rate_limit_status', {
-          resources: 'search',
-        });
-        const res = zRateLimitStatusRes.parse(twitRes);
-        const s = res.resources.search['/search/tweets'];
-        const resetTime = s.reset * 1000;
-        return {
-          ...item,
-          limit: s.remaining,
-          resetTime,
-        };
-      } catch (err) {
-        // @ts-ignore
-        if (err?.errors?.[0]?.code === 215) {
-          await toggleActiveFromTwitterId(item.twitterId, false);
-        }
-        return null;
-      }
-    })
-  );
-  clientList = promises.flatMap((item) => (item === null ? [] : [item]));
 }

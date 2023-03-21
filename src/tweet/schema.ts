@@ -1,46 +1,62 @@
-import { z } from 'zod';
+import type { TweetV1, TwitterApi, ErrorV1, ErrorV2 } from 'twitter-api-v2';
 
-const zRateLimit = z.object({
-  limit: z.number(),
-  remaining: z.number(),
-  reset: z.number(),
-});
+export type SearchV1Param = {
+  q: string;
+  include_ext_edit_control?: boolean;
+  lang?: string; // en
+  locale?: string; // ja
+  result_type?: 'mixed' | 'recent' | 'popular';
+  count?: number; // 初期15, 最大100
+  until?: string; // 2015-07-19
+  since_id?: number;
+  max_id?: number;
+  include_entities?: boolean;
+};
 
-// export const zRes_Headers = z.object({
-//   'x-rate-limit-remaining': z.number(),
-//   'x-rate-limit-limit': z.number(),
-//   'x-rate-limit-reset': z.number(),
-// });
+export interface SearchV1Result {
+  statuses: TweetV1[];
+  search_metadata: {
+    completed_in: number; // 0.084(秒単位)
+    max_id: number;
+    max_id_str: string;
+    since_id: number;
+    since_id_str: string;
+    count: number;
+    query: string;
+    // ?max_id=1638208831783325696&q=%22Battle%20ID%22%20OR%20%22%E5%8F%82%E6%88%A6ID%22&count=30&result_type=recent
+    next_results?: string;
+    // ?since_id=1638219132842950662&q=%22Battle%20ID%22%20OR%20%22%E5%8F%82%E6%88%A6ID%22&result_type=recent
+    refresh_url?: string;
+  };
+}
 
-export const zRateLimitStatusRes = z.object({
-  resources: z.object({
-    search: z.object({
-      '/search/tweets': zRateLimit,
-    }),
-  }),
-});
+export function isErrorV1(err: ErrorV1 | ErrorV2): err is ErrorV1 {
+  return 'code' in err;
+}
 
-export const zUserRes = z.object({
-  id: z.number(),
-  id_str: z.string(),
-  name: z.string(),
-  screen_name: z.string(),
-});
+/**
+ * twitter-api-v2にはsearch/tweetsが無いらしいので
+ * 自前でラッパーを書けとのこと
+ * https://github.com/PLhery/node-twitter-api-v2/issues/135
+ */
+export function v1SearchTweets(client: TwitterApi, param: SearchV1Param) {
+  return client.v1.get<SearchV1Result>('search/tweets.json', param, {
+    fullResponse: true,
+  });
+}
 
-export const zTweetRes = z.object({
-  created_at: z.string(),
-  id: z.number(),
-  id_str: z.string(),
-  text: z.string(),
-  entities: z.any().nullable(),
-  source: z.string(),
-  user: zUserRes,
-});
-
-export const zSearchTweetsRes = z.object({
-  statuses: z.array(zTweetRes),
-  // _headers: zRes_Headers,
-});
+/**
+ * 検索用paramを生成
+ */
+export function getSearchParam(since_id?: number): SearchV1Param {
+  return {
+    q: currentQuery(),
+    result_type: 'recent',
+    count: 3,
+    since_id,
+    include_entities: false,
+  };
+}
 
 export const queryList = [
   `"参戦ID" OR "Battle ID"`,
@@ -49,18 +65,13 @@ export const queryList = [
   // `"参加者募集！" OR "I need backup!"`,
   // `(参戦 AND ID) OR (Battle AND ID)`,
   // `(Battle AND ID) OR (参戦 AND ID)`,
-];
+] as const;
 let num = 0;
 export function currentQuery() {
   num = (num + 1) % queryList.length;
   return queryList[num];
 }
 
-export function parseRateLimitHeaders(twitRes: any) {
-  return {
-    limit: twitRes?._headers?.get('x-rate-limit-remaining') - 0 ?? 0,
-    resetTime:
-      (twitRes?._headers?.get('x-rate-limit-reset') ?? Date.now() / 1000) *
-      1000,
-  };
+export function getTimestamp() {
+  return new Date().toLocaleString();
 }
