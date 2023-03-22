@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsx watch src/index.tsx",
     "dev:tweet": "tsx src/tweet/index.ts",
-    "dev:bc": "tsx src/broadcast/index.ts",
+    "dev:bc": "tsx watch src/broadcast/index.ts",
     "build": "esbuild --bundle --platform=node --outdir=dist ./src/index.tsx",
     "build:tweet": "esbuild --bundle --platform=node --outdir=dist/tweet/ ./src/tweet/index.ts",
     "build:bc": "esbuild --bundle --platform=node --outdir=dist/broadcast/ ./src/broadcast/index.ts",

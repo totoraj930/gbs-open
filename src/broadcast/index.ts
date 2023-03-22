@@ -22,9 +22,10 @@ async function main() {
   const subRedis = getRawChClient();
   subRedis.on('tweet', (raw) => {
     const mini = createRaidTweetMini(raw);
-    sendRaidTweet(mini);
-    const json = JSON.stringify(mini);
-    sendToAll(json);
+    sendToAll({
+      type: 't',
+      data: mini,
+    });
   });
 
   // 不要なキャッシュを削除

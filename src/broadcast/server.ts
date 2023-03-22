@@ -12,7 +12,7 @@ server.on('upgrade', (req, socket, head) => {
     const { pathname } = parse(req.url!);
     if (pathname === '/stream/all') {
       wssAll.handleUpgrade(req, socket, head, (ws) => {
-        ws.emit('connection', ws, req);
+        wssAll.emit('connection', ws, req);
       });
       return;
     }
