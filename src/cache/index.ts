@@ -37,6 +37,10 @@ function createRaidTweetMini(raw: RawRaidTweetMini): RaidTweetMini | null {
     ei: enemyId,
     ft: raw.t,
   };
+  if (enemyId === -1) {
+    temp.en = en;
+    temp.lv = lv;
+  }
   return addCacheAndGrantFirstTime(temp);
 }
 
