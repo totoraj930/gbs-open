@@ -8,6 +8,7 @@ export type RaidTimeCache = {
   enemyId: number;
   time: number;
   firstTime: number;
+  tweetId: number;
 };
 export let raidTimeCache: RaidTimeCache[] = [];
 
@@ -28,6 +29,7 @@ export const raidCache: RaidTweetCache = {};
 
 /**
  * 破壊的にftを付与します
+ * 既に追加済みならnullを返します
  */
 export function addCacheAndGrantFirstTime(tweet: RaidTweetMini) {
   // enemyIdのキャッシュが無ければ配列を作成
@@ -35,6 +37,11 @@ export function addCacheAndGrantFirstTime(tweet: RaidTweetMini) {
   raidCache[tweet.ei].push(tweet);
   // 5件までに絞る
   raidCache[tweet.ei] = raidCache[tweet.ei].slice(-5);
+
+  // 追加済みなら処理しない
+  if (raidTimeCache.find((target) => target.tweetId === tweet.ti)) {
+    return null;
+  }
 
   // 初回投稿時間の取得と付与
   const rcIndex = raidTimeCache.findIndex((target) => {
@@ -46,6 +53,7 @@ export function addCacheAndGrantFirstTime(tweet: RaidTweetMini) {
       enemyId: tweet.ei,
       time: tweet.t,
       firstTime: tweet.t,
+      tweetId: tweet.ti,
     });
     tweet.ft = tweet.t;
     return tweet;

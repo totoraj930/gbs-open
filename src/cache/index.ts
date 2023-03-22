@@ -18,7 +18,9 @@ async function main() {
   const subRedis = getRawChClient();
   subRedis.on('tweet', (raw) => {
     const mini = createRaidTweetMini(raw);
-    sendRaidTweet(mini);
+    if (mini) {
+      sendRaidTweet(mini);
+    }
   });
 
   // 不要なキャッシュを削除
@@ -27,16 +29,15 @@ async function main() {
   }, 1000 * 60);
 }
 
-function createRaidTweetMini(raw: RawRaidTweetMini): RaidTweetMini {
+function createRaidTweetMini(raw: RawRaidTweetMini): RaidTweetMini | null {
   const { en, lv, ...props } = raw;
   const enemyId = getEnemyId(en, lv);
-  const res: RaidTweetMini = {
+  const temp: RaidTweetMini = {
     ...props,
     ei: enemyId,
     ft: raw.t,
   };
-  addCacheAndGrantFirstTime(res);
-  return res;
+  return addCacheAndGrantFirstTime(temp);
 }
 
 main();
