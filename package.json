@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "tsx watch src/index.tsx",
     "dev:tweet": "tsx src/tweet/index.ts",
-    "dev:bc": "tsx watch src/broadcast/index.ts",
+    "dev:cache": "tsx watch src/cache/index.ts",
+    "dev:stream": "tsx watch src/stream/index.ts",
     "build": "esbuild --bundle --platform=node --outdir=dist ./src/index.tsx",
     "build:tweet": "esbuild --bundle --platform=node --outdir=dist/tweet/ ./src/tweet/index.ts",
-    "build:bc": "esbuild --bundle --platform=node --outdir=dist/broadcast/ ./src/broadcast/index.ts",
+    "build:cache": "esbuild --bundle --platform=node --outdir=dist/cache/ ./src/cache/index.ts",
+    "build:stream": "esbuild --bundle --platform=node --outdir=dist/stream/ ./src/stream/index.ts",
     "serve": "node dist/index.js"
   },
   "lisense": "MIT",

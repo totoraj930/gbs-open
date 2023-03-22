@@ -6,6 +6,7 @@ import {
   RaidTweetMini,
   RawRaidTweetMini,
   unpackRawRaidTweetMini,
+  zRaidTweetMini,
   zRawRaidTweetMini,
 } from './schema';
 import mitt from 'mitt';
@@ -19,7 +20,9 @@ export const redisOps: RedisOptions = {
 type RawChEvents = {
   tweet: RawRaidTweetMini;
 };
-
+/**
+ * 生のツイート受信機
+ */
 export function getRawChClient() {
   const receiver = mitt<RawChEvents>();
   const subRedis = new Redis(redisOps);
@@ -28,6 +31,25 @@ export function getRawChClient() {
     try {
       const mini = zRawRaidTweetMini.parse(JSON.parse(json));
       // console.log(Date.now() - mini.t, mini.bi, `Lv.${mini.lv}`, mini.en);
+      receiver.emit('tweet', mini);
+    } catch {}
+  });
+  return receiver;
+}
+
+type RaidTweetChEvents = {
+  tweet: RaidTweetMini;
+};
+/**
+ * 完成済みのツイート受信機
+ */
+export function getRaidTweetChClient() {
+  const receiver = mitt<RaidTweetChEvents>();
+  const subRedis = new Redis(redisOps);
+  subRedis.subscribe('gbs-open-tweet');
+  subRedis.on('message', (ch, json) => {
+    try {
+      const mini = zRaidTweetMini.parse(JSON.parse(json));
       receiver.emit('tweet', mini);
     } catch {}
   });

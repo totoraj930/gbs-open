@@ -1,25 +1,10 @@
-import { wss as wssAll } from './wss/all';
-import { createServer, IncomingMessage, Server, ServerResponse } from 'http';
+import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { parse, URLSearchParams } from 'node:url';
 import { z } from 'zod';
 import { RaidTweetMini } from '$/redis/schema';
-import { raidCache } from './cache';
+import { raidCache } from '../cache/cache';
 
 export const server = createServer();
-
-server.on('upgrade', (req, socket, head) => {
-  try {
-    const { pathname } = parse(req.url!);
-    if (pathname === '/stream/all') {
-      wssAll.handleUpgrade(req, socket, head, (ws) => {
-        wssAll.emit('connection', ws, req);
-      });
-      return;
-    }
-  } catch {}
-  socket.destroy();
-});
-
 type Router = Map<
   string,
   (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => void

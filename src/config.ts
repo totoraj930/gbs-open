@@ -10,7 +10,8 @@ const schema = z.object({
   CONSUMER_SECRET: z.string(),
   PORT: z.string(),
 
-  BC_PORT: z.string(),
+  CACHE_PORT: z.string(),
+  STREAM_PORT: z.string(),
 
   GBS_LIST: z.string().url(),
 
