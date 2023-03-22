@@ -22,6 +22,7 @@ async function main() {
   const subRedis = getRawChClient();
   subRedis.on('tweet', (raw) => {
     const mini = createRaidTweetMini(raw);
+    sendRaidTweet(mini);
     sendToAll({
       type: 't',
       data: mini,
