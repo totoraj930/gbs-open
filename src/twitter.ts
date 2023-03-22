@@ -1,9 +1,8 @@
 import { env } from './config';
-import TWitterApi, { TwitterApi } from 'twitter-api-v2';
-import { AccessTokenOptions } from 'twitter-lite';
+import { TwitterApi } from 'twitter-api-v2';
 import { HonoContext } from '.';
 
-const client = new TWitterApi({
+const client = new TwitterApi({
   appKey: env.CONSUMER_KEY,
   appSecret: env.CONSUMER_SECRET,
 });
