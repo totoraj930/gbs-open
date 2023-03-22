@@ -7,7 +7,7 @@ module.exports = {
       exec_mode: 'fork',
       instances: 1,
       // 再起動
-      // cron_restart: '0,15,30,45 * * * *',
+      cron_restart: '0,30 * * * *',
     },
   ],
 };
