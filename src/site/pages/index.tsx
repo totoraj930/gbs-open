@@ -1,8 +1,8 @@
-import { Header } from '$/features/Header';
-import { User } from '$/features/User';
-import { HonoContext } from '$';
-import { Layout } from '$/pages/Layout';
-import { QA } from '$/features/QA';
+import { Header } from '@/site/features/Header';
+import { User } from '@/site/features/User';
+import { HonoContext } from '@/site';
+import { Layout } from '@/site/pages/Layout';
+import { QA } from '@/site/features/QA';
 
 type Props = {
   count: number;

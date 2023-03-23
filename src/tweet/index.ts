@@ -1,4 +1,4 @@
-import { sendRawRaidTweet } from '$/redis';
+import { sendRawRaidTweet } from '@/redis';
 import { initClientList, start, tweetReceiver } from './receiver';
 
 async function main() {

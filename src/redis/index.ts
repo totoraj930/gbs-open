@@ -1,5 +1,5 @@
-import { env } from '$/config';
-import { RaidTweet as RawRaidTweet } from '$/tweet/receiver';
+import { env } from '@/config';
+import { RawRaidTweet } from '@/tweet/receiver';
 import Redis, { RedisOptions } from 'ioredis';
 import {
   minifyRawRaidTweet,
@@ -11,7 +11,7 @@ import {
 } from './schema';
 import mitt from 'mitt';
 
-export const redisOps: RedisOptions = {
+export const redisOps = {
   host: env.REDIS_HOST,
   password: env.REDIS_PASS,
   port: Number.parseInt(env.REDIS_PORT),

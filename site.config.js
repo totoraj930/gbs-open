@@ -3,7 +3,7 @@ module.exports = {
   apps: [
     {
       name: 'gbs-open',
-      script: './dist/index.js',
+      script: './site/dist/index.js',
       exec_mode: 'fork',
       instances: 1,
     },

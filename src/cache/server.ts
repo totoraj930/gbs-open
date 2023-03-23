@@ -1,7 +1,7 @@
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { parse, URLSearchParams } from 'node:url';
 import { z } from 'zod';
-import { RaidTweetMini } from '$/redis/schema';
+import { RaidTweetMini } from '@/redis/schema';
 import { raidCache } from '../cache/cache';
 
 export const server = createServer();

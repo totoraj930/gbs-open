@@ -1,6 +1,5 @@
-import { GbsList, zGbsList } from '$/cache/gbsList';
-import { RaidTweetMini, zRaidTweetMini } from '$/redis/schema';
-import axios from 'axios';
+import { gbsList, initGbsList } from '../lib';
+import { RaidTweetMini, zRaidTweetMini } from '../lib';
 import { WebSocket } from 'ws';
 import { z } from 'zod';
 
@@ -14,8 +13,6 @@ const zTimeMessage = z.object({
 });
 
 const zMessage = z.union([zTweetMessage, zTimeMessage]);
-
-let gbsList: GbsList = [];
 
 /**
  * ツイートを受信したらコンソールに出力する
@@ -39,10 +36,8 @@ function onTweet(tweet: RaidTweetMini) {
 }
 
 async function main() {
-  // 敵の情報リスト
-  gbsList = zGbsList.parse(
-    (await axios.get('https://gbs.eriri.net/list')).data
-  );
+  // 敵の情報リストの初期化
+  await initGbsList('https://gbs.eriri.net/list');
 
   // WebSocketに接続
   // const ws = new WebSocket('ws://localhost:10502/all');

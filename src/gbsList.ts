@@ -1,11 +1,10 @@
 import axios from 'axios';
 import { z } from 'zod';
-import { env } from '$/config';
 
 export let gbsList: GbsList = [];
 
-export async function initGbsList() {
-  const { data } = await axios.get(env.GBS_LIST);
+export async function initGbsList(url: string) {
+  const { data } = await axios.get(url);
   gbsList = zGbsList.parse(data);
 }
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { z } from 'zod';
-import { zRaidTweetMini } from '$/redis/schema';
+import { zRaidTweetMini } from '../lib/';
 
 const zCacheApiResponse = z.array(
   z.object({

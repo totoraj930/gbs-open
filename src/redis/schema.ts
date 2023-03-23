@@ -1,4 +1,4 @@
-import { RaidTweet as RawRaidTweet } from '$/tweet/receiver';
+import { RawRaidTweet } from '@/tweet/receiver';
 import { z } from 'zod';
 
 /**

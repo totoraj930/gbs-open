@@ -1,13 +1,13 @@
-import { env } from '$/config';
-import { getRawChClient, sendRaidTweet } from '$/redis';
-import { RaidTweetMini, RawRaidTweetMini } from '$/redis/schema';
+import { env } from '@/config';
+import { getRawChClient, sendRaidTweet } from '@/redis';
+import { RaidTweetMini, RawRaidTweetMini } from '@/redis/schema';
 import { addCacheAndGrantFirstTime, releaseTimeCache } from './cache';
-import { getEnemyId, initGbsList } from './gbsList';
+import { getEnemyId, initGbsList } from '@/gbsList';
 import { server } from './server';
-import { getTimestamp } from '$/tweet/schema';
+import { getTimestamp } from '@/tweet/schema';
 
 async function main() {
-  await initGbsList();
+  await initGbsList(env.GBS_LIST);
   console.log(getTimestamp(), '✅ initGbsList()');
   server.listen(Number.parseInt(env.CACHE_PORT));
 
