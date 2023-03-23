@@ -3,4 +3,4 @@
 export * from '@/redis';
 export * from '@/redis/schema';
 export * from '@/config';
-export { RawRaidTweet } from '@/tweet/receiver';
+export type { RawRaidTweet } from '@/tweet/receiver';

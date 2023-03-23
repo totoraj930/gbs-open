@@ -25,7 +25,7 @@ function serverBuild(mode: Mode) {
 
 async function utilsBuild() {
   const baseOps: Options = {
-    splitting: false,
+    splitting: true,
     sourcemap: 'inline',
     dts: true,
     format: ['esm', 'cjs'],
