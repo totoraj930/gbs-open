@@ -1,8 +1,8 @@
-import { env } from '$/config';
+import { env } from '@/config';
 import mitt from 'mitt';
 import { parse } from '@totoraj930/gbf-tweet-parser';
 import { TwitterApi } from 'twitter-api-v2';
-import { getActiveTokenMany, deleteOAuthField } from '$/db';
+import { getActiveTokenMany, deleteOAuthField } from '@/db';
 import {
   getSearchParam,
   getTimestamp,
@@ -11,12 +11,12 @@ import {
 } from './schema';
 
 type ReceiverEvents = {
-  tweet: RaidTweet;
+  tweet: RawRaidTweet;
 };
 
 export const tweetReceiver = mitt<ReceiverEvents>();
 
-export type RaidTweet = {
+export type RawRaidTweet = {
   name: string;
   screen_name: string;
   user_id: number;
@@ -124,7 +124,7 @@ export function getCurrentClient() {
 /**
  * ツイ救援ツイートを検索する
  */
-export async function getTweet(): Promise<RaidTweet[] | null> {
+export async function getTweet(): Promise<RawRaidTweet[] | null> {
   const client = getCurrentClient();
   const cIndex = clientList.indexOf(client);
   console.log(
@@ -145,7 +145,7 @@ export async function getTweet(): Promise<RaidTweet[] | null> {
       (twitRes.rateLimit?.reset ?? Date.now() / 1000) * 1000;
     clientList[cIndex].count++;
 
-    return twitRes.data.statuses.flatMap((tweet): RaidTweet[] => {
+    return twitRes.data.statuses.flatMap((tweet): RawRaidTweet[] => {
       const gbsTweet = parse(tweet.text);
       if (!gbsTweet) return [];
 

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-const schema = z.object({
+export const zConfig = z.object({
   OAUTH_CALLBACK: z.string().url(),
   // CLIENT_ID: z.string(),
   // CLIENT_SECRET: z.string(),
@@ -20,4 +20,4 @@ const schema = z.object({
   REDIS_PASS: z.string(),
 });
 
-export const env = schema.parse(process.env);
+export const env = zConfig.parse(process.env);

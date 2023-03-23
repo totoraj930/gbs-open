@@ -1,6 +1,6 @@
 import { env } from './config';
 import { TwitterApi } from 'twitter-api-v2';
-import { HonoContext } from '.';
+import { HonoContext } from './site';
 
 const client = new TwitterApi({
   appKey: env.CONSUMER_KEY,

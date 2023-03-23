@@ -1,4 +1,4 @@
-import { RaidTweetMini } from '$/redis/schema';
+import { RaidTweetMini } from '@/redis/schema';
 
 /**
  * 重複確認用のキャッシュ

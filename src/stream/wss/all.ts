@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { getTimestamp } from '$/tweet/schema';
-import { RaidTweetMini } from '$/redis/schema';
+import { getTimestamp } from '@/tweet/schema';
+import { RaidTweetMini } from '@/redis/schema';
 
 export const wss = new WebSocketServer({ noServer: true });
 

@@ -1,8 +1,8 @@
 import { Hono, Context } from 'hono';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
-import { env } from './config';
-import { authUrl, getAccessToken } from './twitter';
+import { env } from '../config';
+import { authUrl, getAccessToken } from '../twitter';
 import type { User } from '@prisma/client';
 import {
   deleteSession,
@@ -11,7 +11,7 @@ import {
   getUsersFromSession,
   toggleActive,
   upsertUser,
-} from './db';
+} from '../db';
 import { IndexPage } from './pages';
 import { html } from 'hono/html';
 
@@ -48,9 +48,9 @@ app.get('/auth/toggle/:flag', async (c) => {
   if (!user) return c.redirect('/');
   const { flag } = c.req.param();
   const f = flag.toLowerCase();
-  if (/^true$/.test(f)) {
+  if (/^true@/.test(f)) {
     await toggleActive(user.id, true);
-  } else if (/^false$/.test(f)) {
+  } else if (/^false@/.test(f)) {
     await toggleActive(user.id, false);
   }
   return c.redirect('/');
