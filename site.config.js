@@ -5,6 +5,7 @@ module.exports = {
       name: 'gbs-open',
       script: './site/dist/index.js',
       exec_mode: 'fork',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       instances: 1,
     },
   ],

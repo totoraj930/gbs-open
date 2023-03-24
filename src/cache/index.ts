@@ -4,15 +4,14 @@ import { RaidTweetMini, RawRaidTweetMini } from '@/redis/schema';
 import { addCacheAndGrantFirstTime, releaseTimeCache } from './cache';
 import { getEnemyId, initGbsList } from '@/gbsList';
 import { server } from './server';
-import { getTimestamp } from '@/tweet/schema';
 
 async function main() {
   await initGbsList(env.GBS_LIST);
-  console.log(getTimestamp(), '✅ initGbsList()');
+  console.log('✅ initGbsList()');
   server.listen(Number.parseInt(env.CACHE_PORT));
 
   server.on('listening', () => {
-    console.log(getTimestamp(), `🚀 listening... :${env.CACHE_PORT}`);
+    console.log(`🚀 listening... :${env.CACHE_PORT}`);
   });
 
   const subRedis = getRawChClient();

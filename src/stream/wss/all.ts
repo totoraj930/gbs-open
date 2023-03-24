@@ -1,5 +1,4 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { getTimestamp } from '@/tweet/schema';
 import { RaidTweetMini } from '@/redis/schema';
 
 export const wss = new WebSocketServer({ noServer: true });
@@ -22,7 +21,7 @@ const interval = setInterval(() => {
 }, 1000 * 10);
 
 wss.on('connection', (ws, req) => {
-  console.log(getTimestamp(), 'connection', req.socket.remoteAddress);
+  console.log('connection', req.socket.remoteAddress);
   aliveFlag.set(ws, true);
 
   sendToSocket(ws, { type: 'time', data: Date.now() });

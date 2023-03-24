@@ -3,12 +3,7 @@ import mitt from 'mitt';
 import { parse } from '@totoraj930/gbf-tweet-parser';
 import { TwitterApi } from 'twitter-api-v2';
 import { getActiveTokenMany, deleteOAuthField } from '@/db';
-import {
-  getSearchParam,
-  getTimestamp,
-  isErrorV1,
-  v1SearchTweets,
-} from './schema';
+import { getSearchParam, isErrorV1, v1SearchTweets } from './schema';
 
 type ReceiverEvents = {
   tweet: RawRaidTweet;
@@ -89,7 +84,7 @@ export async function task() {
   }
   if (startFlag) {
     const intervalTime = getIntervalTime();
-    console.log(getTimestamp(), intervalTime);
+    console.log(intervalTime);
     timer = setTimeout(task, intervalTime);
   }
 }
@@ -128,7 +123,6 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
   const client = getCurrentClient();
   const cIndex = clientList.indexOf(client);
   console.log(
-    getTimestamp(),
     client.twitterId,
     'count:' + client.count,
     'limit:' + client.limit
@@ -172,7 +166,7 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
           // 'Invalid or expired token.'
           await disableClient(cIndex);
         }
-        console.error(getTimestamp(), e);
+        console.error(e);
       }
     }
     return null;
