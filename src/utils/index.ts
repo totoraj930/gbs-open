@@ -1,7 +1,13 @@
-// 外部向けのexport(主に型)
+// 外部向けのexport(主に型とパーサー)
 
 export { RaidTweetMini } from '@/redis/schema';
 export { zRaidTweetMini } from '@/redis/schema';
-export * from '@/gbsList';
+export {
+  zGbsList,
+  zGbsListItem,
+  GbsList,
+  GbsListItem,
+  EnemyElement,
+} from './schema';
 
 export default {};

@@ -1,11 +1,10 @@
 import { env } from '@/config';
 import { RawRaidTweet } from '@/tweet/receiver';
-import Redis, { RedisOptions } from 'ioredis';
+import Redis from 'ioredis';
 import {
   minifyRawRaidTweet,
   RaidTweetMini,
   RawRaidTweetMini,
-  unpackRawRaidTweetMini,
   zRaidTweetMini,
   zRawRaidTweetMini,
 } from './schema';
