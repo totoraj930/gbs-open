@@ -32,11 +32,15 @@ async function utilsBuild() {
   };
 
   return Promise.all([
-    build({ ...baseOps, entry: ['src/utils/index.ts'], outDir: 'lib' }),
+    build({
+      ...baseOps,
+      entry: ['src/utils/index.ts'],
+      outDir: '../gbs-open-lib',
+    }),
     build({
       ...baseOps,
       entry: ['src/utils/server.ts'],
-      outDir: 'lib',
+      outDir: '../gbs-open-lib',
     }),
   ]);
 }
