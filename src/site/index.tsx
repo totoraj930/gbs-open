@@ -48,9 +48,9 @@ app.get('/auth/toggle/:flag', async (c) => {
   if (!user) return c.redirect('/');
   const { flag } = c.req.param();
   const f = flag.toLowerCase();
-  if (/^true@/.test(f)) {
+  if (/^true$/.test(f)) {
     await toggleActive(user.id, true);
-  } else if (/^false@/.test(f)) {
+  } else if (/^false$/.test(f)) {
     await toggleActive(user.id, false);
   }
   return c.redirect('/');
