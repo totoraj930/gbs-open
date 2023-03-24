@@ -57,7 +57,7 @@ function runBuild(mode: Mode) {
 async function main() {
   const mode = getMode();
   if (mode === 'all') {
-    const tasks: Mode[] = ['tweet', 'cache', 'site', 'stream', 'util'];
+    const tasks: Mode[] = ['tweet', 'cache', 'site', 'stream'];
     await Promise.all(tasks.map((mode) => runBuild(mode)));
   } else {
     await runBuild(mode);
