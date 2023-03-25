@@ -180,7 +180,12 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
           // Rate limit exceeded
           // client.limit = 0;
         }
-        console.error(client.twitterId, e);
+        console.error(
+          client.twitterId,
+          'limit:' + client.limit,
+          'count:' + client.count,
+          e
+        );
       }
     }
     return null;
