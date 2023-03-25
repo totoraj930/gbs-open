@@ -113,10 +113,10 @@ export function getCurrentClient() {
   // 1. レート制限までの回数に余裕がある
   // 2. 使用できる間隔がより短い
   aliveClient
-    // .sort((a, b) => getScore(a) - getScore(b))
+    .sort((a, b) => getScore(a) - getScore(b))
     .sort((a, b) => b.limit - a.limit);
 
-  return clientList[0];
+  return aliveClient[0];
 }
 
 /**
