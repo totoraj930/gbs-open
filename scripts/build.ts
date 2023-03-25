@@ -1,5 +1,4 @@
-import { defineConfig, Options, build } from 'tsup';
-import tsup from 'tsup';
+import { Options, build } from 'tsup';
 import { argv } from 'process';
 
 const modeList = ['all', 'site', 'tweet', 'cache', 'stream', 'util'] as const;
