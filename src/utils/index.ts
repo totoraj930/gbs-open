@@ -8,6 +8,7 @@ export {
   GbsList,
   GbsListItem,
   EnemyElement,
+  getEnemyData,
 } from './schema';
 
 export default {};

@@ -14,8 +14,8 @@ export const tweetReceiver = mitt<ReceiverEvents>();
 export type RawRaidTweet = {
   name: string;
   screen_name: string;
-  user_id: number;
-  tweet_id: number;
+  user_id: string;
+  tweet_id: string;
   battle_id: string;
   comment?: string;
   enemy_name: string;
@@ -151,8 +151,8 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
           level: gbsTweet.level,
           name: tweet.user.name,
           screen_name: tweet.user.screen_name,
-          user_id: tweet.user.id,
-          tweet_id: tweet.id,
+          user_id: tweet.user.id_str,
+          tweet_id: tweet.id_str,
           time: new Date(tweet.created_at).getTime(),
           comment: gbsTweet.comment,
         },

@@ -4,11 +4,11 @@ import { RaidTweetMini } from '@/redis/schema';
  * 重複確認用のキャッシュ
  */
 export type RaidTimeCache = {
-  battleId: string;
-  enemyId: number;
-  time: number;
-  firstTime: number;
-  tweetId: number;
+  battleId: RaidTweetMini['bi'];
+  enemyId: RaidTweetMini['ei'];
+  time: RaidTweetMini['t'];
+  firstTime: RaidTweetMini['ft'];
+  tweetId: RaidTweetMini['ti'];
 };
 export let raidTimeCache: RaidTimeCache[] = [];
 
