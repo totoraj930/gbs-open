@@ -170,6 +170,10 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
         if (e.code === 89) {
           // 'Invalid or expired token.'
           await disableClient(cIndex);
+        } else if (e.code === 88) {
+          // Rate limit exceeded
+          client.count++;
+          client.limit = 0;
         }
         console.error(e);
       }
