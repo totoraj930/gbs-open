@@ -133,7 +133,8 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
     const twitRes = await v1SearchTweets(client.twit, getSearchParam(since_id));
 
     since_id = twitRes.data.search_metadata.max_id;
-    const serverTime = new Date(twitRes.headers.date ?? Date.now()).getTime();
+    // const serverTime = new Date(twitRes.headers.date ?? Date.now()).getTime();
+    const serverTime = Date.now();
 
     // クライアントの情報更新
     clientList[cIndex].limit = twitRes.rateLimit?.remaining ?? 0;
