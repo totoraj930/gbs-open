@@ -143,6 +143,12 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
     clientList[cIndex].resetTime =
       (twitRes.rateLimit?.reset ?? Date.now() / 1000) * 1000;
     clientList[cIndex].count++;
+    console.log(
+      '->',
+      client.twitterId,
+      'count:' + client.count,
+      'limit:' + client.limit
+    );
 
     return twitRes.data.statuses.flatMap((tweet): RawRaidTweet[] => {
       const gbsTweet = parse(tweet.text);
