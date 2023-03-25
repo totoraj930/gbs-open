@@ -102,7 +102,9 @@ function getScore(client: Client) {
  */
 export function getCurrentClient() {
   const nowTime = Date.now();
-  for (const c of clientList) {
+  // limitが0は弾く
+  const aliveClient = clientList.filter((c) => c.limit > 0);
+  for (const c of aliveClient) {
     // 使用回数が0回なら最優先
     if (c.count === 0) return c;
     // レート制限更新時間を過ぎているなら優先
@@ -110,8 +112,7 @@ export function getCurrentClient() {
   }
   // 1. レート制限までの回数に余裕がある
   // 2. 使用できる間隔がより短い
-  clientList
-    .filter((c) => c.limit > 0) // 0回のものは除外
+  aliveClient
     .sort((a, b) => getScore(a) - getScore(b))
     .sort((a, b) => b.limit - a.limit);
 
