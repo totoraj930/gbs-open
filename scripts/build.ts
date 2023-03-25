@@ -17,7 +17,7 @@ function serverBuild(mode: Mode) {
     entry: [`src/${mode}/index.${mode === 'site' ? 'tsx' : 'ts'}`],
     splitting: false,
     sourcemap: 'inline',
-    dts: true,
+    dts: false,
     format: ['cjs'],
     outDir: `dist/${mode}`,
   });
