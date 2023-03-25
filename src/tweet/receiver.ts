@@ -168,14 +168,17 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
     const errors = TwitterApi.getErrors(err);
     for (const e of errors) {
       if (isErrorV1(e)) {
-        if (e.code === 89) {
-          // 'Invalid or expired token.'
+        if (e.code === 89 || e.code === 326) {
+          // 89 'Invalid or expired token.'
+          // 326 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
           await disableClient(cIndex);
         } else if (e.code === 88) {
           // Rate limit exceeded
-          client.count++;
           client.limit = 0;
         }
+        // ひとまず全部0にする
+        client.count++;
+        client.limit = 0;
         console.error(e);
       }
     }
