@@ -167,6 +167,9 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
     });
   } catch (err) {
     const errors = TwitterApi.getErrors(err);
+    // ひとまず全部0にする
+    clientList[cIndex].count++;
+    clientList[cIndex].limit = 0;
     for (const e of errors) {
       if (isErrorV1(e)) {
         if (e.code === 89 || e.code === 326) {
@@ -175,11 +178,8 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
           await disableClient(cIndex);
         } else if (e.code === 88) {
           // Rate limit exceeded
-          client.limit = 0;
+          // client.limit = 0;
         }
-        // ひとまず全部0にする
-        client.count++;
-        client.limit = 0;
         console.error(client.twitterId, e);
       }
     }
