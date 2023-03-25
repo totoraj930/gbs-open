@@ -179,7 +179,7 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
         // ひとまず全部0にする
         client.count++;
         client.limit = 0;
-        console.error(e);
+        console.error(client.twitterId, e);
       }
     }
     return null;
