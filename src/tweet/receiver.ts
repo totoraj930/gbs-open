@@ -22,6 +22,7 @@ export type RawRaidTweet = {
   level: string;
   language: 'ja' | 'en';
   time: number;
+  elapsed_time: number;
 };
 
 type Client = {
@@ -132,6 +133,7 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
     const twitRes = await v1SearchTweets(client.twit, getSearchParam(since_id));
 
     since_id = twitRes.data.search_metadata.max_id;
+    const serverTime = new Date(twitRes.headers.date ?? Date.now()).getTime();
 
     // クライアントの情報更新
     clientList[cIndex].limit = twitRes.rateLimit?.remaining ?? 0;
@@ -142,6 +144,7 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
     return twitRes.data.statuses.flatMap((tweet): RawRaidTweet[] => {
       const gbsTweet = parse(tweet.text);
       if (!gbsTweet) return [];
+      const tweetTime = new Date(tweet.created_at).getTime();
 
       return [
         {
@@ -153,8 +156,9 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
           screen_name: tweet.user.screen_name,
           user_id: tweet.user.id_str,
           tweet_id: tweet.id_str,
-          time: new Date(tweet.created_at).getTime(),
+          time: tweetTime,
           comment: gbsTweet.comment,
+          elapsed_time: serverTime - tweetTime,
         },
       ];
     });

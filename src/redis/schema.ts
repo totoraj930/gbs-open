@@ -14,6 +14,7 @@ export const zRawRaidTweetMini = z.object({
   lv: z.string(), // level
   l: z.enum(['en', 'ja']), // language
   t: z.number(), // time
+  et: z.number(), // elapsed_time
   c: z.string().optional(), // comment
 });
 
@@ -28,6 +29,7 @@ export const zRawRaidTweetMini = z.object({
  * lv: level\
  * l: language\
  * t: time\
+ * et: elapsed_time\
  * c: comment
  */
 export type RawRaidTweetMini = z.infer<typeof zRawRaidTweetMini>;
@@ -43,6 +45,7 @@ export function minifyRawRaidTweet(tweet: RawRaidTweet): RawRaidTweetMini {
     lv: tweet.level,
     l: tweet.language,
     t: tweet.time,
+    et: tweet.elapsed_time,
     c: tweet.comment,
   };
 }
@@ -59,6 +62,7 @@ export function unpackRawRaidTweetMini(mini: RawRaidTweetMini): RawRaidTweet {
     language: mini.l,
     time: mini.t,
     comment: mini.c,
+    elapsed_time: mini.et,
   };
 }
 
@@ -76,6 +80,7 @@ export const zRaidTweetMini = z.object({
   en: z.string().optional(), // enemy_name
   l: z.enum(['en', 'ja']), // language
   t: z.number(), // time
+  et: z.number(), // elapsed_time
   ft: z.number(), // first time(初回投稿時間)
   c: z.string().optional(), // comment
 });
