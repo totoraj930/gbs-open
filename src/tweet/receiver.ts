@@ -49,7 +49,7 @@ export function getIntervalTime() {
     sumLimit += c.limit;
     sumTime += c.resetTime - now;
   }
-  const userNum = clientList.length;
+  const userNum = clientList.filter((c) => c.limit > 0).length;
   // 各ユーザーの最大使用回数を50回としたときの最小ms
   const limit50 = (1000 * 60 * 15) / (50 * userNum);
   return Math.max(800, Math.max(limit50, sumTime / sumLimit / userNum));
@@ -94,7 +94,7 @@ export async function task() {
  * 低いほど優先
  */
 function getScore(client: Client) {
-  return (client.resetTime - Date.now()) / client.limit;
+  return (client.resetTime - Date.now()) / Math.max(client.limit, 1);
 }
 
 /**
@@ -106,14 +106,14 @@ export function getCurrentClient() {
   const aliveClient = clientList.filter((c) => c.limit > 0);
   for (const c of aliveClient) {
     // 使用回数が0回なら最優先
-    if (c.count === 0) return c;
+    // if (c.count === 0) return c;
     // レート制限更新時間を過ぎているなら優先
-    if (c.resetTime < nowTime) return c;
+    // if (c.resetTime < nowTime) return c;
   }
   // 1. レート制限までの回数に余裕がある
   // 2. 使用できる間隔がより短い
   aliveClient
-    .sort((a, b) => getScore(a) - getScore(b))
+    // .sort((a, b) => getScore(a) - getScore(b))
     .sort((a, b) => b.limit - a.limit);
 
   return clientList[0];
@@ -126,6 +126,7 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
   const client = getCurrentClient();
   const cIndex = clientList.indexOf(client);
   console.log(
+    '<-',
     client.twitterId,
     'count:' + client.count,
     'limit:' + client.limit
