@@ -1,10 +1,10 @@
-import { env } from './config';
+import { tweetEnv } from '@/tweet/config';
 import { TwitterApi } from 'twitter-api-v2';
 import { HonoContext } from './site';
 
 const client = new TwitterApi({
-  appKey: env.CONSUMER_KEY,
-  appSecret: env.CONSUMER_SECRET,
+  appKey: tweetEnv.CONSUMER_KEY,
+  appSecret: tweetEnv.CONSUMER_SECRET,
 });
 
 const tokenCache = new Map<string, string>();
@@ -16,7 +16,7 @@ export function isValidToken(token: string, secret: string) {
 }
 
 export async function authUrl(c: HonoContext) {
-  const res = await client.generateAuthLink(env.OAUTH_CALLBACK, {
+  const res = await client.generateAuthLink(tweetEnv.OAUTH_CALLBACK, {
     authAccessType: 'read',
     linkMode: 'authorize',
   });
@@ -46,8 +46,8 @@ export async function getAccessToken(
   if (!isValidToken(token, secret)) return null;
   try {
     const loginClient = new TwitterApi({
-      appKey: env.CONSUMER_KEY,
-      appSecret: env.CONSUMER_SECRET,
+      appKey: tweetEnv.CONSUMER_KEY,
+      appSecret: tweetEnv.CONSUMER_SECRET,
       accessToken: token,
       accessSecret: secret,
     });

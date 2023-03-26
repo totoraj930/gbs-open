@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import { v4 as uuid } from 'uuid';
 
@@ -104,4 +104,8 @@ export async function getActiveTokenMany() {
       oauthTokenSecret: { not: null },
     },
   });
+}
+
+export async function findUser(param: Prisma.UserFindFirstArgs) {
+  return await prisma.user.findFirst(param);
 }

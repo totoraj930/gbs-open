@@ -1,4 +1,4 @@
-import { env } from '@/config';
+import { streamEnv } from './config';
 import { getRaidTweetChClient } from '@/redis';
 import { sendToAll } from './wss/all';
 import { server } from './server';
@@ -8,10 +8,10 @@ import { server } from './server';
  */
 
 async function main() {
-  server.listen(Number.parseInt(env.STREAM_PORT));
+  server.listen(Number.parseInt(streamEnv.STREAM_PORT));
 
   server.on('listening', () => {
-    console.log(`🚀 listening... :${env.STREAM_PORT}`);
+    console.log(`🚀 listening... :${streamEnv.STREAM_PORT}`);
   });
 
   const subRedis = getRaidTweetChClient();

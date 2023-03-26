@@ -1,7 +1,7 @@
 import { Hono, Context } from 'hono';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
-import { env } from '../config';
+import { siteEnv } from './config';
 import { authUrl, getAccessToken } from '../twitter';
 import type { User } from '@prisma/client';
 import {
@@ -95,7 +95,7 @@ app.get('/auth/callback', async (c) => {
   return c.redirect('/');
 });
 
-const port = Number.parseInt(env.PORT);
+const port = Number.parseInt(siteEnv.PORT);
 serve({
   port,
   fetch: app.fetch,

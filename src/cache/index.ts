@@ -1,4 +1,4 @@
-import { env } from '@/config';
+import { cacheEnv } from './config';
 import { getRawChClient, sendRaidTweet } from '@/redis';
 import { RaidTweetMini, RawRaidTweetMini } from '@/redis/schema';
 import { addCacheAndGrantFirstTime, releaseTimeCache } from './cache';
@@ -6,12 +6,12 @@ import { getEnemyId, initGbsList } from '@/gbsList';
 import { server } from './server';
 
 async function main() {
-  await initGbsList(env.GBS_LIST);
+  await initGbsList(cacheEnv.GBS_LIST);
   console.log('✅ initGbsList()');
-  server.listen(Number.parseInt(env.CACHE_PORT));
+  server.listen(Number.parseInt(cacheEnv.CACHE_PORT));
 
   server.on('listening', () => {
-    console.log(`🚀 listening... :${env.CACHE_PORT}`);
+    console.log(`🚀 listening... :${cacheEnv.CACHE_PORT}`);
   });
 
   const subRedis = getRawChClient();

@@ -1,4 +1,4 @@
-import { env } from '@/config';
+import { redisEnv } from './config';
 import { RawRaidTweet } from '@/tweet/receiver';
 import Redis from 'ioredis';
 import {
@@ -11,9 +11,9 @@ import {
 import mitt from 'mitt';
 
 export const redisOps = {
-  host: env.REDIS_HOST,
-  password: env.REDIS_PASS,
-  port: Number.parseInt(env.REDIS_PORT),
+  host: redisEnv.REDIS_HOST,
+  password: redisEnv.REDIS_PASS,
+  port: Number.parseInt(redisEnv.REDIS_PORT),
 };
 
 type RawChEvents = {

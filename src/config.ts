@@ -1,23 +1,15 @@
-import { z } from 'zod';
 import * as dotenv from 'dotenv';
+import { zCacheConfig } from './cache/config';
+import { zSiteConfig } from './site/config';
+import { zRedisConfig } from './redis/config';
+import { zTweetConfig } from './tweet/config';
+import { zStreamConfig } from './stream/config';
 dotenv.config();
 
-export const zConfig = z.object({
-  OAUTH_CALLBACK: z.string().url(),
-  // CLIENT_ID: z.string(),
-  // CLIENT_SECRET: z.string(),
-  CONSUMER_KEY: z.string(),
-  CONSUMER_SECRET: z.string(),
-  PORT: z.string(),
+export const zAllConfig = zCacheConfig
+  .merge(zSiteConfig)
+  .merge(zRedisConfig)
+  .merge(zTweetConfig)
+  .merge(zStreamConfig);
 
-  CACHE_PORT: z.string(),
-  STREAM_PORT: z.string(),
-
-  GBS_LIST: z.string().url(),
-
-  REDIS_HOST: z.string(),
-  REDIS_PORT: z.string(),
-  REDIS_PASS: z.string(),
-});
-
-export const env = zConfig.parse(process.env);
+export const allEnv = zAllConfig.parse(process.env);

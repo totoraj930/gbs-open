@@ -1,4 +1,4 @@
-import { env } from '@/config';
+import { tweetEnv } from './config';
 import mitt from 'mitt';
 import { parse } from '@totoraj930/gbf-tweet-parser';
 import { TwitterApi } from 'twitter-api-v2';
@@ -220,8 +220,8 @@ export async function initClientList() {
   clientList = users.map((user) => {
     return {
       twit: new TwitterApi({
-        appKey: env.CONSUMER_KEY,
-        appSecret: env.CONSUMER_SECRET,
+        appKey: tweetEnv.CONSUMER_KEY,
+        appSecret: tweetEnv.CONSUMER_SECRET,
         accessToken: user.oauthToken!,
         accessSecret: user.oauthTokenSecret!,
       }),
