@@ -1,7 +1,15 @@
 import { Options, build } from 'tsup';
 import { argv } from 'process';
 
-const modeList = ['all', 'site', 'tweet', 'cache', 'stream', 'util'] as const;
+const modeList = [
+  'all',
+  'site',
+  'tweet',
+  'cache',
+  'stream',
+  'util',
+  'tweet/v2',
+] as const;
 type Mode = typeof modeList[number];
 function getMode(): Mode {
   for (const m of modeList) {
@@ -56,7 +64,7 @@ function runBuild(mode: Mode) {
 async function main() {
   const mode = getMode();
   if (mode === 'all') {
-    const tasks: Mode[] = ['tweet', 'cache', 'site', 'stream'];
+    const tasks: Mode[] = ['tweet', 'tweet/v2', 'cache', 'site', 'stream'];
     await Promise.all(tasks.map((mode) => runBuild(mode)));
   } else {
     await runBuild(mode);

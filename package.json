@@ -20,11 +20,16 @@
   "scripts": {
     "dev:site": "tsx watch src/site/index.tsx",
     "dev:tweet": "tsx src/tweet/index.ts",
+    "dev:v2:get": "tsx src/tweet/v2/index.ts --get",
+    "dev:v2:set": "tsx src/tweet/v2/index.ts --set",
+    "dev:v2:delete": "tsx src/tweet/v2/index.ts --delete",
+    "dev:v2:stream": "tsx src/tweet/v2/index.ts --stream",
     "dev:cache": "tsx watch src/cache/index.ts",
     "dev:stream": "tsx watch src/stream/index.ts",
     "build": "tsx scripts/build.ts --all",
     "build:site": "tsx scripts/build.ts --site",
     "build:tweet": "tsx scripts/build.ts --tweet",
+    "build:v2": "tsx scripts/build.ts --tweet/v2",
     "build:cache": "tsx scripts/build.ts --cache",
     "build:stream": "tsx scripts/build.ts --stream",
     "build:utils": "tsx scripts/build.ts --util",
@@ -54,7 +59,7 @@
     "@types/ws": "^8.5.4",
     "esbuild": "^0.17.12",
     "tsup": "^6.7.0",
-    "tsx": "^3.12.2",
+    "tsx": "^3.12.6",
     "typescript": "^5.0.2"
   }
 }
