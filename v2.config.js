@@ -7,8 +7,8 @@ module.exports = {
       exec_mode: 'fork',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       instances: 1,
-      // 再起動
-      cron_restart: '0 * * * *',
+      // 再起動はしないほうがいいっぽい
+      // cron_restart: '0 * * * *',
     },
   ],
 };
