@@ -52,7 +52,7 @@ export function getIntervalTime() {
   const userNum = clientList.filter((c) => c.limit > 0).length;
   // 各ユーザーの最大使用回数を50回としたときの最小ms
   const limit50 = (1000 * 60 * 15) / (50 * userNum);
-  return Math.max(800, Math.max(limit50, sumTime / sumLimit / userNum));
+  return Math.max(600, Math.max(limit50, sumTime / sumLimit / userNum));
 }
 
 export function start() {
