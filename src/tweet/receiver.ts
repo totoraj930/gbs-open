@@ -34,7 +34,7 @@ type Client = {
 };
 
 let clientList: Client[] = [];
-let since_id = 0;
+let since_id = '0';
 let startFlag = false;
 let timer: NodeJS.Timeout | null = null;
 
@@ -135,7 +135,7 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
   try {
     const twitRes = await v1SearchTweets(client.twit, getSearchParam(since_id));
 
-    since_id = twitRes.data.search_metadata.max_id;
+    since_id = twitRes.data.search_metadata.max_id_str;
     // const serverTime = new Date(twitRes.headers.date ?? Date.now()).getTime();
     const serverTime = Date.now();
 

@@ -8,7 +8,7 @@ export type SearchV1Param = {
   result_type?: 'mixed' | 'recent' | 'popular';
   count?: number; // 初期15, 最大100
   until?: string; // 2015-07-19
-  since_id?: number;
+  since_id?: number | string;
   max_id?: number;
   include_entities?: boolean;
 };
@@ -48,7 +48,7 @@ export function v1SearchTweets(client: TwitterApi, param: SearchV1Param) {
 /**
  * 検索用paramを生成
  */
-export function getSearchParam(since_id?: number): SearchV1Param {
+export function getSearchParam(since_id?: number | string): SearchV1Param {
   return {
     q: currentQuery(),
     result_type: 'recent',
