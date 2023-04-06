@@ -153,6 +153,12 @@ export async function getTweet(): Promise<RawRaidTweet[] | null> {
 
     return twitRes.data.statuses.flatMap((tweet): RawRaidTweet[] => {
       const gbsTweet = parse(tweet.text);
+      if (
+        tweet.source &&
+        tweet.source.length > 0 &&
+        !tweet.source.includes('グランブルー')
+      )
+        return [];
       if (!gbsTweet) return [];
       const tweetTime = new Date(tweet.created_at).getTime();
 
