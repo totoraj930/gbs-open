@@ -18,6 +18,7 @@ export const redisOps = {
 
 type RawChEvents = {
   tweet: RawRaidTweetMini;
+  updateGbsList: void;
 };
 /**
  * 生のツイート受信機
@@ -31,13 +32,18 @@ export function getRawChClient(chName = 'gbs-open-raw') {
       const mini = zRawRaidTweetMini.parse(JSON.parse(json));
       // console.log(Date.now() - mini.t, mini.bi, `Lv.${mini.lv}`, mini.en);
       receiver.emit('tweet', mini);
-    } catch {}
+    } catch {
+      if (json === 'updateGbsList') {
+        receiver.emit('updateGbsList');
+      }
+    }
   });
   return receiver;
 }
 
 type RaidTweetChEvents = {
   tweet: RaidTweetMini;
+  updateGbsList: void;
 };
 /**
  * 完成済みのツイート受信機
@@ -50,7 +56,11 @@ export function getRaidTweetChClient(chName = 'gbs-open-tweet') {
     try {
       const mini = zRaidTweetMini.parse(JSON.parse(json));
       receiver.emit('tweet', mini);
-    } catch {}
+    } catch {
+      if (json === 'updateGbsList') {
+        receiver.emit('updateGbsList');
+      }
+    }
   });
   return receiver;
 }
