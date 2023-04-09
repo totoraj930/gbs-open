@@ -2,5 +2,5 @@
 
 export * from '@/redis';
 export * from '@/redis/schema';
-export * from '@/config';
+// export * from '@/config';
 export type { RawRaidTweet } from '@/tweet/receiver';
