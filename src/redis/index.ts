@@ -22,10 +22,10 @@ type RawChEvents = {
 /**
  * 生のツイート受信機
  */
-export function getRawChClient() {
+export function getRawChClient(chName = 'gbs-open-raw') {
   const receiver = mitt<RawChEvents>();
   const subRedis = new Redis(redisOps);
-  subRedis.subscribe('gbs-open-raw');
+  subRedis.subscribe(chName);
   subRedis.on('message', (ch, json) => {
     try {
       const mini = zRawRaidTweetMini.parse(JSON.parse(json));
@@ -42,10 +42,10 @@ type RaidTweetChEvents = {
 /**
  * 完成済みのツイート受信機
  */
-export function getRaidTweetChClient() {
+export function getRaidTweetChClient(chName = 'gbs-open-tweet') {
   const receiver = mitt<RaidTweetChEvents>();
   const subRedis = new Redis(redisOps);
-  subRedis.subscribe('gbs-open-tweet');
+  subRedis.subscribe(chName);
   subRedis.on('message', (ch, json) => {
     try {
       const mini = zRaidTweetMini.parse(JSON.parse(json));
@@ -63,16 +63,16 @@ const pubRedis = new Redis(redisOps);
 /**
  * 生のツイートデータを送信
  */
-export function sendRawRaidTweet(tweet: RawRaidTweet) {
+export function sendRawRaidTweet(tweet: RawRaidTweet, chName = 'gbs-open-raw') {
   const mini = minifyRawRaidTweet(tweet);
   const json = JSON.stringify(mini);
-  pubRedis.publish('gbs-open-raw', json);
+  pubRedis.publish(chName, json);
 }
 
 /**
  * 加工済みのツイートデータを送信
  */
-export function sendRaidTweet(tweet: RaidTweetMini) {
+export function sendRaidTweet(tweet: RaidTweetMini, chName = 'gbs-open-tweet') {
   const json = JSON.stringify(tweet);
-  pubRedis.publish('gbs-open-tweet', json);
+  pubRedis.publish(chName, json);
 }
